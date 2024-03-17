@@ -65,8 +65,7 @@ class ChromaCollectionCreator:
             chunk_overlap=20,
         )
 
-        texts = text_splitter.create_documents(processor.pages)
-        print(texts)
+        texts = text_splitter.create_documents(self.processor.pages)
 
         if texts is not None:
             st.success(
@@ -77,7 +76,7 @@ class ChromaCollectionCreator:
         # https://docs.trychroma.com/
         # Create a Chroma in-memory client using the text chunks and the embeddings model
         # [Your code here for creating Chroma collection]
-        self.db = Chroma.from_documents(texts, self.embed_model)
+        self.db = Chroma.from_documents(texts, self.embed_model, persist_directory="../chromadb")
 
 
         if self.db:
