@@ -86,7 +86,7 @@ class QuizGenerator:
         from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 
         # Enable a Retriever
-        retriever = self.vectorstore.as_retriever()
+        retriever = self.vectorstore.db.as_retriever()
         
         # Use the system template to create a PromptTemplate
         prompt = PromptTemplate.from_template(self.system_template)
@@ -122,14 +122,14 @@ class QuizGenerator:
         Note: This method relies on `generate_question_with_vectorstore` for question generation and `validate_question` for ensuring question uniqueness. Ensure `question_bank` is properly initialized and managed.
         """
         self.question_bank = [] # Reset the question bank
-
+        retry_count = 0
         for _ in range(self.num_questions):
             ##### YOUR CODE HERE #####
-            question_str = # Use class method to generate question
+            question_str = self.generate_question_with_vectorstore()
             
             ##### YOUR CODE HERE #####
             try:
-                # Convert the JSON String to a dictionary
+                question = json.loads(question_str)
             except json.JSONDecodeError:
                 print("Failed to decode question JSON.")
                 continue  # Skip this iteration if JSON decoding fails
@@ -140,8 +140,12 @@ class QuizGenerator:
             if self.validate_question(question):
                 print("Successfully generated unique question")
                 # Add the valid and unique question to the bank
+                self.question_bank.append(question)
             else:
                 print("Duplicate or invalid question detected.")
+                retry_count+=1
+                if retry_count > 3:
+                    break
             ##### YOUR CODE HERE #####
 
         return self.question_bank
@@ -170,15 +174,21 @@ class QuizGenerator:
         # Consider missing 'question' key as invalid in the dict object
         # Check if a question with the same text already exists in the self.question_bank
         ##### YOUR CODE HERE #####
-        return is_unique
+        if "question" not in question or question["question"] in self.question_bank:
+            return False
+        
+
+        return True
 
 
 # Test Generating the Quiz
 if __name__ == "__main__":
+
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../../authentication.json'
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "YOUR-PROJECT-ID-HERE",
+        "project": "gemini-quizify-417419",
         "location": "us-central1"
     }
     
