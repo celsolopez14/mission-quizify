@@ -20,7 +20,7 @@ git clone https://github.com/celsolopez14/mission-quizify.git
 cd mission-quizify
 ```
 
-2. Set Up a Virtual Environment (Optional)
+2. Set Up a Virtual Environment (Optional):
 It's a good practice to create virtual environment when working with Python projects. This keeps your projects dependencies isolated. If you have virtualenv install create a new environment with:
 ```bash
 virtualenv env
@@ -39,7 +39,7 @@ To be able to use the google cloud services, you first need to auth with your go
 gcloud init
 gcloud auth application-default login
 ```
-5. Authentication json file (Optional)
+5. Authentication json file (Optional):
 The project sets the Google credentials by accessing the authentication.json file obtained from your google cloud services. You can declare your credentials however you like, but just know that if you pass your json file into the mission-quizify directory you can skip this part.
 
 ### Starting Gemini Quizify App
